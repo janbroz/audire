@@ -1,0 +1,9 @@
+
+<p> New music </p>
+
+<%= form_for :something, :url => {:controller => "music", :action => "create"} do |f| %>
+
+<%= f.text_field :name %>
+
+<%= f.submit %>
+<% end %>
