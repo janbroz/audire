@@ -36,6 +36,9 @@ gem 'bson_ext'
 
 # gem 'net/http'
 # gem 'uri'
+gem 'watson-api-client'
+gem 'addressable'
+gem 'rest-client'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
