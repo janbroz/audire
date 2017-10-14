@@ -15,7 +15,16 @@ class ChopinService
   def compose(partiture)
     # This should be doing the parsing and stuff
 
+    puts "Response from bluemix was:"
+    j_partiture = JSON.parse(partiture)
+    puts j_partiture
+
     response = {file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}
+  end
+
+  def parse_class(category)
+    
+
   end
 
 end
