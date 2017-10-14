@@ -15,8 +15,7 @@ class ChopinService
   def compose(partiture)
     # This should be doing the parsing and stuff
 
-
-    
+    response = {file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}
   end
 
 end
