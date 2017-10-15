@@ -22,7 +22,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 # for Mongodb
-gem 'mongoid', '~> 4'
+gem 'mongoid', '~> 5'
 gem 'bson_ext'
 
 # Use ActiveModel has_secure_password
