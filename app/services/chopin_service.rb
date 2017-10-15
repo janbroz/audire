@@ -19,12 +19,38 @@ class ChopinService
     j_partiture = JSON.parse(partiture)
     puts j_partiture
 
-    response = {file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}
+    music = {"name" => "nothing", "score" => 0}
+    images = j_partiture["images"]
+    classifiers = images[0]["classifiers"]
+    classes = classifiers[0]["classes"]
+    classes.each do |cl|
+      music = parse_class(music, cl)
+      #puts cl
+    end
+    response = get_sound(music["name"])
   end
 
-  def parse_class(category)
-    
+  def parse_class(current, new)
+    #puts "current is: #{current}"
+    #puts "new is: #{new}"
 
+    if new["score"].to_f > current["score"].to_f
+      {"name"=> new["class"], "score" => new["score"]}
+    else
+      current
+    end
   end
 
+  def get_sound(name)
+    case name
+    when "person"
+      CategoryInformation.where(name: "Person")[0].url
+    when "animal"
+      CategoryInformation.where(name: "Animal")[0].url
+    when "fruit"
+      CategoryInformation.where(name: "Fruit")[0].url
+    else
+      CategoryInformation.where(name: "Nothing")[0].url
+    end
+  end
 end
