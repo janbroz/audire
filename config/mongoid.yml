@@ -103,6 +103,7 @@ test:
 production:
   clients:
     default:
+      #uri: mongodb://heroku_r1kcc78r:eb8cau2kvo6c4tc1foc7p2uqv2@ds141464.mlab.com:41464/heroku_r1kcc78r
       uri: <%= ENV['MONGOLAB_URI'] %>
       options:
         max_retries: 30 
