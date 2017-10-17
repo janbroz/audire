@@ -34,7 +34,7 @@ class ChopinService
     #puts "current is: #{current}"
     #puts "new is: #{new}"
 
-    if new["score"].to_f > current["score"].to_f
+    if (new["score"].to_f > current["score"].to_f) && valid_category(new["class"])
       {"name"=> new["class"], "score" => new["score"]}
     else
       current
@@ -42,15 +42,50 @@ class ChopinService
   end
 
   def get_sound(name)
-    case name
-    when "person"
-      CategoryInformation.where(name: "Person")[0].url
-    when "animal"
-      CategoryInformation.where(name: "Animal")[0].url
-    when "fruit"
-      CategoryInformation.where(name: "Fruit")[0].url
+    category = CategoryInformation.where(name: name)[0]
+    null_cat = CategoryInformation.where(name: 'nothing')[0].url
+    if category
+      category.url
     else
-      CategoryInformation.where(name: "Nothing")[0].url
+      null_cat
     end
+    # This one works, but is ugly as fuck
+    # case name
+    # when "person"
+    #   CategoryInformation.where(name: "Person")[0].url
+    # when "animal"
+    #   CategoryInformation.where(name: "Animal")[0].url
+    # when "man"
+    #   CategoryInformation.where(name: "Man")[0].url
+    # when "woman"
+    #   CategoryInformation.where(name: "Woman")[0].url
+    # when "fruit"
+    #   CategoryInformation.where(name: "Fruit")[0].url
+    # when "food"
+    #   CategoryInformation.where(name: "Food")[0].url
+    # when "cat"
+    #   CategoryInformation.where(name: "Cat")[0].url
+    # when "dog"
+    #   CategoryInformation.where(name: "Dog")[0].url
+    # when "weapon"
+    #   CategoryInformation.where(name: "Weapon")[0].url
+    # when "yellow color"
+    #   CategoryInformation.where(name: "Yellow")[0].url
+    # when "blue color"
+    #   CategoryInformation.where(name: "Blue")[0].url
+    # when "green color"
+    #   CategoryInformation.where(name: "Green")[0].url
+    # when "red color"
+    #   CategoryInformation.where(name: "Red")[0].url
+    # when "black color"
+    #   CategoryInformation.where(name: "Red")[0].url
+    # else
+    #   CategoryInformation.where(name: "Nothing")[0].url
+    # end
+  end
+
+  def valid_category(name)
+    valid_ones = ['animal','person','man','woman','fruit','food','cat','dog','weapon','yellow color','blue color','green color','red color','black color','nothing']
+    contains = valid_ones.include? name
   end
 end
