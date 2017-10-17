@@ -27,4 +27,4 @@ CategoryInformation.create(name: 'blue color', url: 'http://satoshibutton.tk/Aud
 CategoryInformation.create(name: 'green color', url: 'http://satoshibutton.tk/Audire/verde.mp3')
 CategoryInformation.create(name: 'red color', url: 'http://satoshibutton.tk/Audire/rojo.mp3')
 CategoryInformation.create(name: 'black color', url: 'http://satoshibutton.tk/Audire/negro.mp3')
-CategoryInformation.create(name: 'nothing', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3')
+CategoryInformation.create(name: 'nothing', url: 'http://satoshibutton.tk/Audire/nada.mp3')
