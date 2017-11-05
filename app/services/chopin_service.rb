@@ -3,13 +3,20 @@
 class ChopinService
 
   # We pass the image to bluemix and get the json back
-  def inspirate(picture)
-    json_partiture = { :categories => "tara!" }
-
-
-    json_partiture
+  def imagine(picture)
+    uri = URI.parse("https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classify?api_key=e06af8f14f2d026a6d0c8728bae66ae4bbe494e8&version=2016-05-20")
+    t_response = {}
+    Net::HTTP.start(uri.host, uri.port, :use_ssl => true) do |http|
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.body = picture.read
+      request["Content-Type"] = "image/jpg"
+      request['Accept-Encoding'] = ''
+      response = http.request(request)
+      t_response = response.body
+    end
+    puts t_response
+    t_response
   end
-
 
   # We pass the bluemix json
   def compose(partiture)
@@ -24,20 +31,32 @@ class ChopinService
     classifiers = images[0]["classifiers"]
     classes = classifiers[0]["classes"]
     classes.each do |cl|
-      music = parse_class(music, cl)
-      #puts cl
+      # This means this class has a hierarchy that should be
+      # proccessed before calculating their importance.
+      hierarchy = cl["type_hierarchy"]
+      levels = []
+      if hierarchy != nil
+        hierarchy[0] = ''
+        levels = hierarchy.split('/')
+        puts "#{cl["class"]} has: #{levels.length}"
+        #puts levels
+        #puts cl
+      end
+      music = parse_class(music, cl, levels)
+      #puts "contender is: #{music["name"]} : #{music["score"]}"
     end
     response = get_sound(music["name"])
   end
 
-  def parse_class(current, new)
-    #puts "current is: #{current}"
-    #puts "new is: #{new}"
-
-    if (new["score"].to_f > current["score"].to_f) && valid_category(new["class"])
+  def parse_class(current, new, levels)
+    if levels.include? current["name"] && valid_category(new["class"])
       {"name"=> new["class"], "score" => new["score"]}
     else
-      current
+      if (new["score"].to_f > current["score"].to_f) && valid_category(new["class"])
+        {"name"=> new["class"], "score" => new["score"]}
+      else
+        current
+      end
     end
   end
 
@@ -49,39 +68,26 @@ class ChopinService
     else
       null_cat
     end
-    # This one works, but is ugly as fuck
-    # case name
-    # when "person"
-    #   CategoryInformation.where(name: "Person")[0].url
-    # when "animal"
-    #   CategoryInformation.where(name: "Animal")[0].url
-    # when "man"
-    #   CategoryInformation.where(name: "Man")[0].url
-    # when "woman"
-    #   CategoryInformation.where(name: "Woman")[0].url
-    # when "fruit"
-    #   CategoryInformation.where(name: "Fruit")[0].url
-    # when "food"
-    #   CategoryInformation.where(name: "Food")[0].url
-    # when "cat"
-    #   CategoryInformation.where(name: "Cat")[0].url
-    # when "dog"
-    #   CategoryInformation.where(name: "Dog")[0].url
-    # when "weapon"
-    #   CategoryInformation.where(name: "Weapon")[0].url
-    # when "yellow color"
-    #   CategoryInformation.where(name: "Yellow")[0].url
-    # when "blue color"
-    #   CategoryInformation.where(name: "Blue")[0].url
-    # when "green color"
-    #   CategoryInformation.where(name: "Green")[0].url
-    # when "red color"
-    #   CategoryInformation.where(name: "Red")[0].url
-    # when "black color"
-    #   CategoryInformation.where(name: "Red")[0].url
-    # else
-    #   CategoryInformation.where(name: "Nothing")[0].url
-    # end
+  end
+
+  def describe(scene)
+    # Return a json with the scene objects
+    objects = []
+    json_scene = JSON.parse(scene)
+    images = json_scene["images"]
+    classifiers = images[0]["classifiers"]
+    classes = classifiers[0]["classes"]
+
+    classes.each do |s_class|
+      objects << s_class["class"]
+    end
+    "The scene has: #{objects.join(", ")}"
+  end
+
+  def describe_speech(scene)
+    #this should get a .wav from watson.
+    
+    #curl -X POST -u "26305cac-94e6-493c-a37b-ab91a1cd3167":"d3EV40JdRZW7" --header "Content-Type: application/json" --header "Accept: audio/wav" --data "{\"text\":\"The scene has: banana, fruit, diet (food), food, honeydew, melon, olive color, lemon yellow color\"}" --output hello_world.wav "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?voice=en-US_AllisonVoice"
   end
 
   def valid_category(name)
