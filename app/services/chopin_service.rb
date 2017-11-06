@@ -86,7 +86,7 @@ class ChopinService
 
   def describe_speech(scene)
     #this should get a .wav from watson.
-    
+
     #curl -X POST -u "26305cac-94e6-493c-a37b-ab91a1cd3167":"d3EV40JdRZW7" --header "Content-Type: application/json" --header "Accept: audio/wav" --data "{\"text\":\"The scene has: banana, fruit, diet (food), food, honeydew, melon, olive color, lemon yellow color\"}" --output hello_world.wav "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?voice=en-US_AllisonVoice"
   end
 
