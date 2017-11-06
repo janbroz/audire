@@ -33,7 +33,7 @@ class MusicController < ApplicationController
     tmp_response = "https://s3.us-east-2.amazonaws.com/mcategory/test6.wav"
     response = service.compose(scene)
     description = service.describe(scene)
-    complete_response = {:link => tmp_response, :description => description}
+    complete_response = {:link => response, :description => description}
     render :json => complete_response
   end
 
