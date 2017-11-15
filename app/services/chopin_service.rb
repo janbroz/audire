@@ -22,7 +22,7 @@ class ChopinService
   def sonic_partiture(json_from)
     json = JSON.parse(json_from)
     classes = json["images"].first["classifiers"].first["classes"]
-    resp = {"main": "holi", "secondary": []}
+    resp = {"main": "rain", "secondary": []}
     main = 0
     classes.each do |cl|
       if resp[:main] == nil
@@ -45,13 +45,25 @@ class ChopinService
     secondary_classes = json[:secondary]
     s_length = secondary_classes.length
 
+    current_stuff = []
     # Main part of the code generator
-    code = "START\nlive_loop :main do\n  sample :#{main_class}\n  sleep 1\nend\n"
+    code = "START\nlive_loop :main do\n  sample \"#{get_sample(main_class)}\"\n  sleep sample_duration \"#{get_sample(main_class)}\"\nend\n"
+
+    code << "sleep 3\n"
+    current_stuff << get_sample(main_class)
     # Secondary part of the code generator(each category is a loop)
+
     secondary_classes.each_with_index do |c_class, index|
-      tmp = "live_loop :#{(index+1).humanize} do\n  sample :#{c_class}\n  sleep 1\nend\n"
-      code = code + tmp
+      nname = get_sample(c_class)
+      if nname != "" && !current_stuff.include?(nname)
+        tmp = "sample \"#{get_sample(c_class)}\"\nsleep 1\n"
+        code = code + tmp
+      end
     end
+    #   tmp = "live_loop :#{(index+1).humanize} do\n  sample #{get_sample(c_class)}\n  sleep sample_duration #{get_sample(c_class)}\nend\n"
+    #   code = code + tmp
+    # end
+
     code << "END"
     file = Tempfile.new(['foo', '.rb'])
     file.write(code)
@@ -59,14 +71,39 @@ class ChopinService
     file
   end
 
-  def talk_to_ec2(file)
-    # uri = URI.parse("http://localhost:2000")
-    # http = Net::HTTP.new(uri.host, uri.port)
-    # request = Net::HTTP::Post.new(uri.request_uri)
-    # request.body = {holi: "holi there"}.to_json
-    # response = http.request(request)
+  def get_sample(sample)
+    # This gets the sample url from the database.
+    s_name = "/home/sonicpi/sonicpi/samples/#{contains(sample)}.wav"
+    #s_name = "/home/pan/giskards-positronic-brain/visual-classifier/sonicpi/samples/#{contains(sample)}.wav"
+    s_name
+  end
 
-    uri = URI('http://localhost:2000')
+  def contains(name)
+    new_name = name
+    if name.include?("dog")
+      new_name = "dog"
+    end
+    if name.include?("cat") || name.include?("feline")
+      new_name = "cat"
+    end
+    if name.include?("bird")
+      new_name = "bird"
+    end
+    if name.include?("plant")
+      new_name = "tree"
+    end
+    if name.include?("color")
+      new_name = ""
+    end
+    if name == ""
+      new_name = "fire"
+    end
+    return new_name
+  end
+
+  def talk_to_ec2(file)
+    #uri = URI('http://localhost:2000')
+    uri = URI.parse("http://52.91.82.138:2000")
     request = Net::HTTP::Post.new(uri)
     form_data = [['files', file]]
 

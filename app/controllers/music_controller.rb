@@ -48,9 +48,10 @@ class MusicController < ApplicationController
 
 
     response = service.talk_to_ec2(partiture)
+    complete_response = {:link => response, :description => description}
     #puts response.body
     # end of our amazon stuff.
-    render :json => response
+    render :json => complete_response
     #render :json => complete_response
   end
 
